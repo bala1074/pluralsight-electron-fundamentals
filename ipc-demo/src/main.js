@@ -6,8 +6,7 @@ const app = electron.app
 const BrowserWindow = electron.BrowserWindow
 const ipc = electron.ipcMain                    // we need to import ipcMain
 
-//let mainWindow
-const windows = []
+let mainWindow
 
 app.on('ready', _ => {
   mainWindow = new BrowserWindow({
@@ -15,15 +14,14 @@ app.on('ready', _ => {
     width: 400
   })
 
-
   mainWindow.loadURL(`file://${__dirname}/countdown.html`)
 
 // countdown()
 
-  // Open the DevTools.
-  // mainWindow.webContents.openDevTools()
+// Open the DevTools.
+// mainWindow.webContents.openDevTools()
 
-mainWindow.on('closed', _ => {
+  mainWindow.on('closed', _ => {
     console.log('closed!');
     mainWindow = null
   })
