@@ -1,5 +1,7 @@
 const electron = require('electron')
 
+const images = require('./images')
+
 const { app } = electron
 
 function enabledCycleEffect(items) {
@@ -12,36 +14,6 @@ function enabledCycleEffect(items) {
 module.exports = mainWindow => {
   const name = app.getName()
   const template = [
-    {
-      label: name,
-      submenu: [
-        {
-          label: 'About ' + name,
-          role: 'about'
-        },
-        { type: 'separator' },
-        {
-          label: 'Hide ' + name,
-          accelerator: 'Command+H',
-          role: 'hide'
-        },
-        {
-          label: 'Hide Others',
-          accelerator: 'Command+Shift+H',
-          role: 'hideothers'
-        },
-        {
-          label: 'Show All',
-          role: 'unhide'
-        },
-        { type: 'separator' },
-        {
-          label: 'Quit',
-          accelerator: 'Command+Q',
-          click: _ => { app.quit() }
-        }
-      ]
-    },
     {
         label: 'Effects',
         submenu: [
@@ -64,9 +36,63 @@ module.exports = mainWindow => {
             type: 'radio',
             click: _ => mainWindow.webContents.send('effect-choose', 'ascii')
           },
+          {
+            label: 'Daltonize',
+            type: 'radio',
+            click: _ => mainWindow.webContents.send('effect-choose', 'daltonize')
+          },
+          {
+            label: 'hex',
+            type: 'radio',
+            click: _ => mainWindow.webContents.send('effect-choose', 'hex')
+          }
         ]
+    },
+    {
+      labe: 'View',
+      submenu: [
+        {
+          label: 'Photos Directory',
+          click: _ => images.openDir(images.getPicturesDir(app))
+        }
+      ]
     }
   ]
+
+  if (process.platform === 'darwin') {
+    template.unshift(
+      {
+        label: name,
+        submenu: [
+          {
+            label: 'About ' + name,
+            role: 'about'
+          },
+          { type: 'separator' },
+          {
+            label: 'Hide ' + name,
+            accelerator: 'Command+H',
+            role: 'hide'
+          },
+          {
+            label: 'Hide Others',
+            accelerator: 'Command+Shift+H',
+            role: 'hideothers'
+          },
+          {
+            label: 'Show All',
+            role: 'unhide'
+          },
+          { type: 'separator' },
+          {
+            label: 'Quit',
+            accelerator: 'Command+Q',
+            click: _ => { app.quit() }
+          }
+        ]
+      }
+    )
+  }
 
   return template
 }
