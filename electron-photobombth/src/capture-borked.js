@@ -5,16 +5,15 @@ const effects = require('./effects')
 const flash = require('./flash')
 const video = require('./video')
 
-let canvasTarget
-const ipc = electron.ipcRenderer
-const remote = electron.remote
-let seriously
-const shell = electron.shell
-let videoSrc
+const { ipcRenderer: ipc, shell, remote } = electron
 
 const images = remote.require('./images')
 
-const formatImgTag = (doc, bytes) => {
+let canvasTarget
+let seriously
+let videoSrc
+
+function formatImgTag(doc, bytes) {
   const div = doc.createElement('div')
   div.classList.add('photo')
   const close = doc.createElement('div')
@@ -28,9 +27,10 @@ const formatImgTag = (doc, bytes) => {
 }
 
 window.addEventListener('DOMContentLoaded', _ => {
+  const videoEl = document.getElementById('video')
   const canvasEl = document.getElementById('canvas')
   const recordEl = document.getElementById('record')
-  const photosEl = document.getElementById('photos')
+  const photosEl = document.getElementById('.photosContainer')
   const counterEl = document.getElementById('counter')
   const flashEl = document.getElementById('flash')
 
@@ -39,36 +39,34 @@ window.addEventListener('DOMContentLoaded', _ => {
   canvasTarget = seriously.target('#canvas')
   effects.choose(seriously, videoSrc, canvasTarget)
 
-  video.init(navigator)
+  video.init(navigator, videoEl)
 
   recordEl.addEventListener('click', _ => {
-    recordEl.setAttribute('disabled', 'disabled')
-    const setCount = count => counterEl.innerHTML = count > 0 ? count : ''
-    countdown.start(3, setCount, _ => {
+    countdown.start(counterEl, 3, _ => {
       flash(flashEl)
       const bytes = video.captureBytesFromLiveCanvas(canvasEl)
       ipc.send('image-captured', bytes)
-      photosEl.insertBefore(formatImgTag(document, bytes), photosEl.firstChild)
-      recordEl.removeAttribute('disabled')
+      photosEl.appendChild(formatImgTag(document, bytes))
     })
-  }, false)
-
-  // TODO: move to images mod?
-  photosEl.addEventListener('click', evt => {
-    const isRm = evt.target.classList.contains('photoClose')
-    const selector = isRm ? '.photoClose' : '.photoImg'
-
-    const photos = Array.from(document.querySelectorAll(selector))
-    const index = photos.findIndex(el => el == evt.target)
-
-    if (index > -1) {
-      if (isRm)
-        ipc.send('image-remove', index)
-      else
-        shell.showItemInFolder(images.getFromCache(index))
-    }
   })
-}, false)
+
+  photosEl.addEventListener('click', evt => {
+     const isRm = evt.target.classList.contains('photoClose')
+     const selector = isRm ? '.photoClose' : '.photoImg'
+
+     const photos = Array.from(document.querySelectorAll(selector))
+     const index = photos.findIndex(el => el == evt.target)
+
+     if (index > -1) {
+       if (isRm)
+          ipc.send('image-remove', index)
+       else
+          shell.showItemInFolder(images.getFromCache(index))
+
+     }
+
+  })
+})
 
 ipc.on('image-removed', (evt, index) => {
   document.getElementById('photos').removeChild(Array.from(document.querySelectorAll('.photo'))[index])
