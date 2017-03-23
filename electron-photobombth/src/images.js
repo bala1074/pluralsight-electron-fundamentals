@@ -2,9 +2,17 @@ const fs = require('fs')
 const path = require('path')
 
 const logError = err => err && console.error(err)
-exports.save = (picturesPath, contents) => {
+
+let images = []
+
+exports.save = (picturesPath, contents, done) => {
   const base64Data = contents.replace(/^data:image\/png;base64,/, '' )
-  fs.writeFile(path.join(picturesPath, `${new Date()}.png`), base64Data, { encoding: 'base64' }, logError)
+  const imgPath = path.join(picturesPath, `${new Date()}.png`)
+  fs.writeFile(imgPath, base64Data, { encoding : 'base64' }, err => {
+    if (err) return logError(err)
+
+    done(null, imgPath)
+  })
 }
 
 exports.getPicturesDir = app => {
@@ -18,4 +26,22 @@ exports.mkdir = picturesPath => {
     else if (err || !stats.isDirectory())
       fs.mkdir(picturesPath, logError)
   })
+}
+
+exports.rm = (index, done) => {
+  fs.unlink(images[index], err => {
+    if(err) return logErr(err)
+
+    images.splice(index, 1)
+    done()
+  })
+}
+
+exports.cache = imgPath => {
+  images = images.concat([imgPath])
+  return images
+}
+
+exports.getFromCache = index => {
+  return images[index]
 }

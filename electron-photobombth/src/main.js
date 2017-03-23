@@ -24,5 +24,17 @@ app.on('ready', _ => {
 })
 
 ipc.on('image-captured', (evt, contents) => {
-  images.save(images.getPicturesDir(app), contents)
+  images.save(images.getPicturesDir(app), contents, (err, imgPath) => {
+    images.cache(imgPath)
+  })
+})
+
+ipc.on('image-remove', (evt, index) => {
+  images.rm(index, _ => {
+    evt.sender.send('image-removed', index)
+  })
+})
+
+ipc.on('image-removed', (evt, index) => {
+  document.getElementById('photos').removeChild(Array.from(document.querySelectorAll('.photo'))[index])
 })
