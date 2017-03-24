@@ -2,9 +2,10 @@
   "name": "electron-photobombth",
   "productName": "Photobombth",
   "version": "1.0.0",
-  "description": "Photobooth App",
+  "description": "Photobombth App",
   "main": "src/main.js",
   "scripts": {
+    "build": "rimraf Photobombth-* && electron-packager . --platform=darwin,win32,linux --arch=x64 --icon=app",
     "start": "electron ."
   },
   "keywords": [],
