@@ -1,18 +1,9 @@
 const electron = require('electron')
-const path = require('path')
 
 const images = require('./images')
 const menuTemplate = require('./menu')
 
-<<<<<<< HEAD
 const { app, BrowserWindow, ipcMain: ipc, Menu } = electron
-=======
-const app = electron.app
-const BrowserWindow = electron.BrowserWindow
-const ipc = electron.ipcMain
-const Menu = electron.Menu
-
->>>>>>> 38088c801d42b5450b63b67da532e50c699da77b
 
 let mainWindow = null
 
