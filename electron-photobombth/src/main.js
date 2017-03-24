@@ -3,7 +3,7 @@ const electron = require('electron')
 const images = require('./images')
 const menuTemplate = require('./menu')
 
-const { app, BrowserWindow, ipcMain: ipc } = electron
+const { app, BrowserWindow, ipcMain: ipc, Menu } = electron
 
 let mainWindow = null
 
@@ -15,6 +15,8 @@ app.on('ready', _ => {
   })
 
   mainWindow.loadURL(`file://${__dirname}/capture.html`)
+
+  mainWindow.webContents.openDevTools()
 
   images.mkdir(images.getPicturesDir(app))
 
