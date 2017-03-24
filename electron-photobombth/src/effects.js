@@ -42,8 +42,8 @@ function setIndexToEffectIndex(effectName) {
   currentIndex = effectNames.indexOf(effectName)
   return currentIndex
 }
-exports.choose = (seriously, src, target, effectsName = 'vanilla') => {
-  effects[effectsName](seriously, src, target)
+exports.choose = (seriously, src, target, effectName = 'vanilla') => {
+  effects[effectName](seriously, src, target)
   setIndexToEffectIndex(effectName)
 }
 

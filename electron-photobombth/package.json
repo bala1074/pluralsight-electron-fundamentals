@@ -1,6 +1,6 @@
 {
   "name": "electron-photobombth",
-  "productName" : "Photobombth",
+  "productName": "Photobombth",
   "version": "1.0.0",
   "description": "Photobooth App",
   "main": "src/main.js",
@@ -11,6 +11,8 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "electron": "^1.6.2"
+    "electron": "^1.6.2",
+    "electron-packager": "^8.6.0",
+    "rimraf": "^2.6.1"
   }
 }

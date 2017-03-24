@@ -1,4 +1,4 @@
-const constraints = {
+const videoMediaConstraints = {
   audio: false,
   video: {
     mandatory: {
@@ -10,22 +10,27 @@ const constraints = {
   }
 }
 
-function handleSuccess(videoEl, stream) {
-  videoEl.src = window.URL.createObjectURL(stream)
+function attachVideoSrc(video, stream) {
+	if (window.URL)
+		video.src = window.URL.createObjectURL(stream)
+	else
+		video.src = stream
 }
 
-function handleError(error) {
-  console.log("Camera error: ", error);
+function handleCameraError(error) {
+	console.error('Camera error: ', error.code)
 }
 
-exports.init = (nav, videoEl) => {
-  nav.getUserMedia = nav.webkitGetUserMedia
-  nav.getUserMedia(constraints, stream => handleSuccess(videoEl, stream), handleError)
+exports.init = nav => {
+  nav.getUserMedia = nav.getUserMedia ||
+      nav.webkitGetUserMedia || nav.mozGetUserMedia
+
+  nav.getUserMedia(videoMediaConstraints, stream => attachVideoSrc(video, stream), handleCameraError)
 }
 
-exports.captureBytes = (videoEl, ctx, canvasEl) => {
-  ctx.drawImage(videoEl, 0,0)
-  return canvasEl.toDataURL('image/png')
+exports.captureBytes = (video, ctx, canvas) => {
+  ctx.drawImage(video, 0, 0)
+  return canvas.toDataURL('image/png')
 }
 
 exports.captureBytesFromLiveCanvas = canvas => {
